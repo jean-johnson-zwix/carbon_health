@@ -3,12 +3,10 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "next-themes";
-import { Routes } from "@/routes";
-import "./index.css";
 
 const queryClient = new QueryClient();
 
-const App = () => {
+export default function Providers({ children }: { children: React.ReactNode }) {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider
@@ -20,11 +18,9 @@ const App = () => {
         <TooltipProvider>
           <Toaster />
           <Sonner />
-          <Routes />
+          {children}
         </TooltipProvider>
       </ThemeProvider>
     </QueryClientProvider>
   );
-};
-
-export default App;
+}

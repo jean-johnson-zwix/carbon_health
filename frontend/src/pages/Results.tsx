@@ -1,6 +1,4 @@
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Navbar } from '@/components/Navbar';
-import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { TipCard } from '@/components/TipCard';
@@ -27,20 +25,16 @@ export default function Results() {
 
   if (!calc) {
     return (
-      <div className="min-h-screen bg-background">
-        <Navbar />
-        <div className="max-w-[1120px] mx-auto px-4 md:px-6 py-16">
-          <div className="glass-card p-8 text-center">
-            <h2 className="text-xl font-semibold mb-4">No results to display</h2>
-            <p className="text-muted-foreground mb-6">
-              It looks like you haven't calculated your emissions yet.
-            </p>
-            <Button onClick={() => navigate('/calculator')}>
-              Go to Calculator
-            </Button>
-          </div>
+      <div className="max-w-[1120px] mx-auto px-4 md:px-6 py-16">
+        <div className="glass-card p-8 text-center">
+          <h2 className="text-xl font-semibold mb-4">No results to display</h2>
+          <p className="text-muted-foreground mb-6">
+            It looks like you haven't calculated your emissions yet.
+          </p>
+          <Button onClick={() => navigate('/calculator')}>
+            Go to Calculator
+          </Button>
         </div>
-        <Footer />
       </div>
     );
   }
@@ -125,10 +119,7 @@ export default function Results() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <Navbar />
-      
-      <div className="max-w-[1120px] mx-auto px-4 md:px-6 py-8">
+    <div className="max-w-[1120px] mx-auto px-4 md:px-6 py-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center space-x-4">
@@ -196,9 +187,6 @@ export default function Results() {
             <TreesSavedCard {...treesData} />
           </div>
         </div>
-      </div>
-
-      <Footer />
     </div>
   );
 }

@@ -1,5 +1,3 @@
-import { Navbar } from '@/components/Navbar';
-import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, Leaf, Target, BarChart3, Lightbulb } from 'lucide-react';
@@ -9,10 +7,7 @@ export default function About() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-background">
-      <Navbar />
-      
-      <div className="max-w-[1120px] mx-auto px-4 md:px-6 py-8">
+    <div className="max-w-[1120px] mx-auto px-4 md:px-6 py-8">
         {/* Header */}
         <div className="flex items-center space-x-4 mb-8">
           <Button variant="ghost" size="icon" onClick={() => navigate('/')}>
@@ -159,9 +154,6 @@ export default function About() {
             makes carbon tracking accessible, understandable, and actionable for everyone.
           </p>
         </div>
-      </div>
-
-      <Footer />
     </div>
   );
 }

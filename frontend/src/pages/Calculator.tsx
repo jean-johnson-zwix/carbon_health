@@ -1,13 +1,12 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Navbar } from '@/components/Navbar';
-import { Footer } from '@/components/Footer';
+import { FactorsDialog } from '@/components/FactorsDialog';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ArrowLeft, Calculator as CalculatorIcon, Loader2 } from 'lucide-react';
+import { ArrowLeft, Calculator as CalculatorIcon, Loader2, BookOpen } from 'lucide-react';
 import { DiaryInput } from '@/types';
 import { postDiary, FACTORS } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
@@ -16,6 +15,7 @@ export default function Calculator() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const [factorsDialogOpen, setFactorsDialogOpen] = useState(false);
   const [formData, setFormData] = useState<DiaryInput>({
     date: new Date().toISOString().slice(0, 10),
     trips: [],
@@ -97,19 +97,27 @@ export default function Calculator() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <Navbar />
-      
-      <div className="max-w-[1120px] mx-auto px-4 md:px-6 py-8">
+    <div className="max-w-[1120px] mx-auto px-4 md:px-6 py-8">
         {/* Header */}
-        <div className="flex items-center space-x-4 mb-8">
-          <Button variant="ghost" size="icon" onClick={() => navigate('/')}>
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
-          <div>
-            <h1 className="text-2xl font-bold font-sora">Carbon Calculator</h1>
-            <p className="text-muted-foreground">Calculate your weekly carbon emissions</p>
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center space-x-4">
+            <Button variant="ghost" size="icon" onClick={() => navigate('/')}>
+              <ArrowLeft className="h-4 w-4" />
+            </Button>
+            <div>
+              <h1 className="text-2xl font-bold font-sora">Carbon Calculator</h1>
+              <p className="text-muted-foreground">Calculate your weekly carbon emissions</p>
+            </div>
           </div>
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={() => setFactorsDialogOpen(true)}
+            className="flex items-center gap-2"
+          >
+            <BookOpen className="h-4 w-4" />
+            View emission factors
+          </Button>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -288,9 +296,12 @@ export default function Calculator() {
             </Card>
           </div>
         </div>
-      </div>
 
-      <Footer />
+      {/* Factors Dialog */}
+      <FactorsDialog 
+        open={factorsDialogOpen}
+        onOpenChange={setFactorsDialogOpen}
+      />
     </div>
   );
 }

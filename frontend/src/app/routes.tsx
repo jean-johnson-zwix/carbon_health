@@ -1,6 +1,7 @@
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { createBrowserRouter } from 'react-router-dom';
 import { Suspense } from 'react';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
+import Layout from './layout';
 import Landing from '@/pages/Landing';
 import Calculator from '@/pages/Calculator';
 import Results from '@/pages/Results';
@@ -10,26 +11,32 @@ import NotFound from '@/pages/NotFound';
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <Landing />,
-    errorElement: <NotFound />,
+    element: <Layout><Landing /></Layout>,
+    errorElement: <Layout><NotFound /></Layout>,
+  },
+  {
+    path: '/start',
+    element: <Layout><Calculator /></Layout>,
   },
   {
     path: '/calculator',
-    element: <Calculator />,
+    element: <Layout><Calculator /></Layout>,
   },
   {
     path: '/results',
-    element: <Results />,
+    element: <Layout><Results /></Layout>,
   },
   {
     path: '/about',
-    element: <About />,
+    element: <Layout><About /></Layout>,
   },
   {
     path: '*',
-    element: <NotFound />,
+    element: <Layout><NotFound /></Layout>,
   },
 ]);
+
+export { router };
 
 const LoadingFallback = () => (
   <div className="min-h-screen bg-background flex items-center justify-center">

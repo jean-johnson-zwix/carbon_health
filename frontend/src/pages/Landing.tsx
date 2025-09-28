@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Navbar } from '@/components/Navbar';
 import { Hero } from '@/components/Hero';
 import { SeasonalBanner } from '@/components/SeasonalBanner';
 import { TodayCarbonCard } from '@/components/TodayCarbonCard';
@@ -12,7 +11,6 @@ import { StreakTracker } from '@/components/StreakTracker';
 import { WhatIfSimulator } from '@/components/WhatIfSimulator';
 import { TreesSavedCard } from '@/components/TreesSavedCard';
 import { FactorsDialog } from '@/components/FactorsDialog';
-import { Footer } from '@/components/Footer';
 import {
   mockTodayData,
   mockGoalData,
@@ -44,13 +42,10 @@ export default function Landing() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <Navbar />
-      
+    <div>
       {/* Hero Section */}
       <Hero 
         onStart={handleStartTracking}
-        onOpenFactors={handleOpenFactors}
       />
 
       {/* Seasonal Banner */}
@@ -104,9 +99,6 @@ export default function Landing() {
           </div>
         </div>
       </div>
-
-      {/* Footer */}
-      <Footer />
 
       {/* Factors Dialog */}
       <FactorsDialog 
