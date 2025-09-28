@@ -1,8 +1,12 @@
+export type Trip = { miles: number; mode: 'car' | 'bus' | 'rail' | 'walk' };
+export type PowerUse = { usage: number; device: 'phone' | 'tv' | 'computer' };
+export type Meal = { servings: number; meat: 'beef' | 'pork' | 'chicken' };
+
 export type DiaryInput = {
-  date: string;
-  trips: { miles: number; mode: 'car' | 'bus' | 'rail' | 'walk' }[];
-  power_use: { usage: number; device: 'phone' | 'tv' | 'computer' }[];
-  meals: { servings: number; meat: 'beef' | 'pork' | 'chicken' }[];
+  date: string; // YYYY-MM-DD
+  trips: Trip[];
+  power_use: PowerUse[];
+  meals: Meal[];
 };
 
 export type CalcResponse = {
