@@ -1,4 +1,4 @@
-import { createBrowserRouter } from 'react-router-dom';
+import { createBrowserRouter, RouterProvider  } from 'react-router-dom';
 import { Suspense } from 'react';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import Layout from './layout';
