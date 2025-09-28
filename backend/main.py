@@ -11,6 +11,7 @@ from datetime import datetime, timezone, timedelta
 import firebase_admin
 from firebase_admin import credentials, firestore
 from passlib.hash import argon2
+from datetime import date, timedelta
 
 
 # =========================
@@ -104,8 +105,8 @@ def register(user: User):
         "email": user.email,
         "password": hash_password(user.password),
         "heat_source": user.heat_source,
-	    "housing": user.housing,
-	    "income": user.income
+        "housing": user.housing,
+        "income": user.income
     }
     user_ref.set(user_data)
     return {'response': f'Registration successful for {user.username}!'}
@@ -169,6 +170,8 @@ def update_co2_emission(transaction, current_emission_ref, new_emission_log):
         "total_emission":current_emission.get('total_emission')+new_emission.get('total_emission')
         }
         transaction.update(current_emission_ref, daily_emission)
+        daily_emission['username'] = new_emission_log.username
+        daily_emission['date'] = new_emission_log.date.isoformat()
         return daily_emission
     else:
         daily_emission = {
@@ -201,5 +204,66 @@ def get_co2_emission(new_emission: CalculateRequest, current_user: str = Depends
     return emission_summary
  
 
-    
 
+@app.get("/summary/weekly/{username}")
+def get_weekly_summary(username:str, report_date: date | None = None, current_user: str = Depends(get_current_user)):
+
+    if username != current_user:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="User not Authorized")
+
+    if report_date is None:
+        report_date = date.today()
+
+    # find the week
+    days_since_sunday = (report_date.weekday() + 1) % 7
+    start_of_week = report_date - timedelta(days=days_since_sunday)
+    end_of_week = start_of_week + timedelta(days=6)
+
+    # query the database
+    docs = db.collection('daily_emission') \
+             .where('username', '==', username) \
+             .where('date', '>=', start_of_week.isoformat()) \
+             .where('date', '<=', end_of_week.isoformat()) \
+             .order_by('date') \
+             .stream()
+
+    # retrieve records
+    records = [doc.to_dict() for doc in docs]
+    return {
+        "username": username,
+        "week_start_date": start_of_week.isoformat(),
+        "week_end_date": end_of_week.isoformat(),
+        "records": records,
+        "weekly_total_emission": sum(rec.get('total_emission', 0) for rec in records)
+    }
+
+
+@app.get("/summary/monthly/{username}/{year}/{month}")
+def get_monthly_summary(username: str, year: int, month: int, current_user: str = Depends(get_current_user)):
+
+    if username != current_user:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="User not Authorized")
+
+    # find the month
+    start_of_month_str = f"{year}-{month:02d}-01"
+    next_month = month + 1 if month < 12 else 1
+    next_year = year if month < 12 else year + 1
+    start_of_next_month_str = f"{next_year}-{next_month:02d}-01"
+
+    # query the database
+    docs = db.collection('daily_emission') \
+             .where('username', '==', username) \
+             .where('date', '>=', start_of_month_str) \
+             .where('date', '<', start_of_next_month_str) \
+             .order_by('date') \
+             .stream()
+
+    # retrieve the records
+    records = [doc.to_dict() for doc in docs]
+    return {
+        "username": username,
+        "year": year,
+        "month": month,
+        "records": records,
+        "monthly_total_emission": sum(rec.get('total_emission', 0) for rec in records)
+    }

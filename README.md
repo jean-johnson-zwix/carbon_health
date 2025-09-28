@@ -176,3 +176,83 @@ Sample Response:
 }
 ```
 
+## Weekly Report API
+
+Endpoint: /summary/weekly/{username}
+
+cURL Command:
+
+```
+curl --location 'http://localhost:3000/summary/weekly/john' \
+--header 'Authorization: Bearer *token*'
+```
+
+Sample Response:
+
+```
+{
+    "username": "john",
+    "week_start_date": "2025-09-28",
+    "week_end_date": "2025-10-04",
+    "records": [
+        {
+            "username": "john",
+            "transport_emission": 6.12,
+            "power_emission": 0.12,
+            "total_emission": 12.14,
+            "meal_emission": 5.9,
+            "date": "2025-09-28"
+        }
+    ],
+    "weekly_total_emission": 12.14
+}
+```
+
+## Monthly API
+
+Endpoint: /summary/monthly/{username}/{year}/{month}
+
+cURL Command:
+
+```
+curl --location 'http://localhost:3000/summary/monthly/john/2025/9' \
+--header 'Authorization: Bearer *token*'
+```
+
+Sample Response:
+
+```
+{
+    "username": "john",
+    "year": 2025,
+    "month": 9,
+    "records": [
+        {
+            "username": "john",
+            "transport_emission": 6.12,
+            "power_emission": 0.12,
+            "total_emission": 12.14,
+            "meal_emission": 5.9,
+            "date": "2025-09-23"
+        },
+        {
+            "last_updated": "2025-09-28T11:37:39.894000+00:00",
+            "username": "john",
+            "transport_emission": 2.49,
+            "power_emission": 0.172,
+            "total_emission": 5.16,
+            "meal_emission": 2.5,
+            "date": "2025-09-27"
+        },
+        {
+            "username": "john",
+            "transport_emission": 6.12,
+            "power_emission": 0.12,
+            "total_emission": 12.14,
+            "meal_emission": 5.9,
+            "date": "2025-09-28"
+        }
+    ],
+    "monthly_total_emission": 29.44
+}
+```
