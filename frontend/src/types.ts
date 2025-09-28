@@ -7,15 +7,25 @@ export type DiaryInput = {
   trips: Trip[];
   power_use: PowerUse[];
   meals: Meal[];
+  username: string;
 };
 
 export type CalcResponse = {
-  total_co2: number | string;
+  total_emission: number | string;
   date: string;
-  transport_total: number;
-  meal_total: number;
-  power_total: number;
+  transport_emission: number;
+  meal_emission: number;
+  power_emission: number;
 };
+
+export type RecommendationList = {
+  recommendations: Recommendation[];
+}
+
+export type Recommendation = {
+  recommendation: string;
+  impact: string;
+}
 
 export type CategoryData = {
   label: 'Transport' | 'Energy' | 'Diet';

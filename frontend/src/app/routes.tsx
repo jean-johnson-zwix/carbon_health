@@ -1,4 +1,4 @@
-import { createBrowserRouter, RouterProvider  } from 'react-router-dom';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { Suspense } from 'react';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import Layout from './layout';
@@ -7,6 +7,8 @@ import Calculator from '@/pages/Calculator';
 import Results from '@/pages/Results';
 import About from '@/pages/About';
 import NotFound from '@/pages/NotFound';
+import Login from '@/pages/Login'
+import Register from '@/pages/Register'
 
 const router = createBrowserRouter([
   {
@@ -29,6 +31,14 @@ const router = createBrowserRouter([
   {
     path: '/about',
     element: <Layout><About /></Layout>,
+  },
+  {
+    path: '/login',
+    element: <Layout><Login /></Layout>,
+  },
+  {
+    path: '/register',
+    element: <Layout><Register /></Layout>,
   },
   {
     path: '*',

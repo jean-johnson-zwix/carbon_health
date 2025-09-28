@@ -4,7 +4,16 @@ import path from 'path';
 
 export default defineConfig({
   plugins: [react()],
-  server: { port: 8080, open: true },
+  server: {
+    port: 8080, open: true,
+    proxy: {
+      '/api': {
+        target: 'http://54.235.167.147:8000',
+        changeOrigin: true, // Needed for virtual hosted sites
+        rewrite: (path) => path.replace(/^\/api/, ''), // Rewrite the path
+      },
+    }
+   },
   preview: { port: 8080 },
   resolve: { 
     alias: { 
