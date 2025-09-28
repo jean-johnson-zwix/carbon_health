@@ -1,6 +1,31 @@
 # Carbon Health
 A web application designed to track your personal carbon footprint.
 
+
+## Set up
+
+Step 1: Clone the repository
+
+```
+git clone https://github.com/jean-johnson-zwix/carbon_health
+cd carbon_health
+cd backend
+```
+
+Step 2: Setup the python environmnet
+
+```
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
+
+Step 3: Run the application
+
+```
+uvicorn main:app
+```
+
 ## Features
 
 - Calculate daily carbon emissions based on transportation, power consumed and food consumed
