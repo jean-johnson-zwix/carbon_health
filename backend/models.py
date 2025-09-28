@@ -3,6 +3,16 @@ from typing import List
 import datetime
 
 # =========================
+# Agentic AI Data Models
+# =========================
+class Recommendation(BaseModel):
+    recommendation: str
+    impact: str
+
+class RecommendationResponse(BaseModel):
+    recommendations: List[Recommendation]
+
+# =========================
 # User Data Models
 # =========================
 class User(BaseModel):

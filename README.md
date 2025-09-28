@@ -256,3 +256,35 @@ Sample Response:
     "monthly_total_emission": 29.44
 }
 ```
+
+## Carbon Emission Reduction Recommendation API
+
+Endpoint: recommendation/{username}
+
+cURL Command:
+
+```
+curl --location --request POST 'http://localhost:3000/recommendation/john' \
+--header 'Authorization: Bearer *token*'
+```
+
+Sample Response:
+
+```
+{
+    "recommendations": [
+        {
+            "recommendation": "With your average daily transport emissions around 4.9 kg CO2, aim to combine errands or consider cycling/walking for short trips (under 2 miles) instead of driving at least 3-4 times a week.",
+            "impact": "Each short car trip avoided can save approximately 0.5 - 1 kg CO2. Doing this 3-4 times a week could reduce your transport emissions by 1.5 - 4 kg CO2 weekly, plus save on fuel costs."
+        },
+        {
+            "recommendation": "To address your average daily meal emissions of approximately 4.8 kg CO2, try swapping out one red meat meal per week for a plant-based alternative, like a lentil stew or a bean burger, and exploring vegetarian options for lunch on two other days.",
+            "impact": "Replacing just one red meat meal can save 2-5 kg CO2 per week, and choosing plant-based lunches further amplifies this, significantly lowering your overall food carbon footprint and potentially your grocery bill."
+        },
+        {
+            "recommendation": "Even though your reported power emissions are currently low, as a 3b2b home with electric heating, ensuring energy efficiency is key. Start with a budget-friendly step: check for and seal drafts around windows and doors with weatherstripping or caulk.",
+            "impact": "Sealing drafts can prevent significant heat loss in winter and heat gain in summer, making your electric heating/cooling systems more efficient. This could save 5-10% on energy bills and reduce associated emissions when heating or cooling is actively used, which is particularly relevant for electric heating."
+        }
+    ]
+}
+```
