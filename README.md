@@ -51,5 +51,28 @@ Input:
 - Type of Meat (beef/pork/chicken)
 
 
+# API REFERENCE
 
+## Login API
+
+Endpoint: 
+
+cURL Command:
+
+```
+```
+
+Sample Request:
+
+```
+```
+
+Sample Response:
+
+```
+```
+
+## Register API
+
+## Calculate API
 
