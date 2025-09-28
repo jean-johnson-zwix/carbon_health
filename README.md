@@ -23,7 +23,7 @@ pip install -r requirements.txt
 Step 3: Run the application
 
 ```
-uvicorn main:app
+uvicorn main:app --port 5000
 ```
 
 ## Features
