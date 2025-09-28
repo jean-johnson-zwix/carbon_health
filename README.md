@@ -55,24 +55,124 @@ Input:
 
 ## Login API
 
-Endpoint: 
+Endpoint: /login
 
 cURL Command:
 
 ```
+curl --location 'http://localhost:5000/login' \
+--header 'Content-Type: application/json' \
+--data '{
+	"username":"john",
+	"password":"secretpassword"
+}'
 ```
 
 Sample Request:
 
 ```
+{
+	"username":"john",
+	"password":"secretpassword"
+}
 ```
 
 Sample Response:
 
 ```
+{
+    "access_token": "",
+    "token_type": "bearer"
+}
 ```
 
 ## Register API
 
+Endpoint: /register
+
+cURL Command:
+
+```
+curl --location 'http://localhost:5000/register' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+	"username":"john",
+	"name":"John Smith",
+	"email":"john_smith@gmail.com",
+	"password":"secretpassword",
+	"heat_source": "electric",
+	"housing":"3b2b",
+	"income":3500.00
+}'
+```
+
+Sample Request:
+
+```
+{
+	"username":"john",
+	"name":"John Smith",
+	"email":"john_smith@gmail.com",
+	"password":"secretpassword",
+	"heat_source": "electric",
+	"housing":"3b2b",
+	"income":3500.00
+}
+```
+
+Sample Response:
+
+```
+{
+    "response": "Registration successful for john!"
+}
+```
+
 ## Calculate API
+
+Endpoint: /calculate
+
+cURL Command:
+
+```
+curl --location 'http://localhost:3000/calculate' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Bearer *token*' \
+--data '{
+	"username" : "john",
+	"date":"2025-09-27",
+	"meals":[
+		{
+			"servings":1,
+			"meat":"chicken"
+		}
+    ]
+}'
+```
+
+Sample Request:
+
+```
+{
+	"username" : "john",
+	"date":"2025-09-27",
+	"meals":[
+		{
+			"servings":1,
+			"meat":"chicken"
+		}
+    ]
+}
+```
+
+Sample Response:
+
+```
+{
+    "transport_emission": 2.49,
+    "power_emission": 0.172,
+    "meal_emission": 2.5,
+    "total_emission": 5.16
+}
+```
 
