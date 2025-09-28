@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # OS / editor junk
 .DS_Store
 Thumbs.db
@@ -32,3 +33,20 @@ coverage/
 .next/
 .vercel/
 .turbo/
+=======
+# Python
+__pycache__/
+*.pyc
+env/
+venv/
+*.sqlite3
+
+# Node/React
+node_modules/
+build/
+.env
+
+# IDE files
+.vscode/
+.idea/
+>>>>>>> a6e11163 (Added authentication with SQLAlchemy)

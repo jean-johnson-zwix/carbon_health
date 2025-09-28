@@ -1,13 +1,80 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Depends
 from pydantic import BaseModel
 from typing import List
 import json
 import os
+from database import Base, engine, SessionLocal
+from models import EmissionRecord
+from sqlalchemy.orm import Session
+from sqlalchemy import func, extract
+from datetime import date
+from passlib.context import CryptContext
+from jose import JWTError, jwt
+from datetime import datetime, timezone, timedelta
+
+
+# =========================
+# Database
+# =========================
+Base.metadata.create_all(bind=engine)
+
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+
+# =========================
+# Authentication
+# =========================
+
+pwd_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
+
+def hash_password(password: str) -> str:
+    return pwd_context.hash(password)
+
+def verify_password(plain_password: str, hashed_password: str) ->str:
+    return pwd_context.verify(plain_password, hashed_password)
 
 app = FastAPI(
     title="Carbon Health API",
     description="API for tracking personal carbon emissions."
 )
+
+# =========================
+# JWT Authentication
+# =========================
+SECRET_KEY = 'supersecret' #⚠️ replace with env variable in production
+ALGORITHM = 'HS256'
+ACCESS_TOKEN_EXPIRE_MINUTES = 60
+
+def create_access_token(data: dict, expires_delta: timedelta | None = None):
+    to_encode = data.copy()
+    expire = datetime.now(timezone.utc) + (expires_delta or timedelta(minutes=15))
+    to_encode.update({'exp': expire})
+    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    return encoded_jwt
+
+# =========================
+# Protect Routes With JWT
+# =========================
+from fastapi import Depends, status
+from fastapi.security import OAuth2PasswordBearer
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
+
+def get_current_user(token: str = Depends(oauth2_scheme)):
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        email: str = payload.get("sub")
+        if email is None:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
+        return email
+    except JWTError:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
 
 # =========================
 # User Data Models
@@ -86,7 +153,7 @@ def register(user: User):
     if user.email in users:
         raise HTTPException(status_code=400, detail="Email already registered")
     
-    users[user.email] = {"name": user.name, "password": user.password}
+    users[user.email] = {"name": user.name, "password": hash_password(user.password)}
     save_users(users)
     
     return {"message": f"User {user.name} registered successfully!"}
@@ -95,16 +162,26 @@ def register(user: User):
 def login(user: LoginUser):
     users = load_users()
     
+    
     if user.email not in users or users[user.email]["password"] != user.password:
         raise HTTPException(status_code=401, detail="Invalid email or password")
     
-    return {"message": f"Welcome back, {users[user.email]['name']}!"}
+    hashed_password = users[user.email]["password"]
+    if not verify_password(user.password, user[user.email]['password']):
+        raise HTTPException(status_code=401, detail='invalid email or password')
+    
+    access_token = create_access_token(
+        data={"sub": user.email},
+        expires_delta=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    )
+    
+    return {'access_token': access_token, 'token_type': 'bearer'}
 
 # =========================
 # CO2 Calculation Route
 # =========================
 @app.post("/calculate")
-def calculate_co2(data: CO2Data):
+def calculate_co2(data: CO2Data, db: Session = Depends(get_db)):
     # Transport total
     transport_total = sum(
         TRANSPORT_CO2.get(trip.mode.lower(), 0) * trip.miles
@@ -126,6 +203,19 @@ def calculate_co2(data: CO2Data):
     total_co2 = transport_total + power_total + meal_total
 
     date_str = f"{data.year:04d}-{data.month:02d}-{data.day:02d}"
+    
+    record = EmissionRecord(
+        user_id=1,   #static for now
+        date=date(data.year, data.month, data.day),
+        transport_total = transport_total,
+        power_total=power_total,
+        meal_total=meal_total,
+        total_co2 = total_co2,
+    )
+
+    db.add(record)
+    db.commit()
+    db.refresh(record)
 
     return {
         "transport_total": round(transport_total, 3),
@@ -137,3 +227,32 @@ def calculate_co2(data: CO2Data):
         "housing": data.housing,
         "income": data.income
     }
+
+
+# =========================
+# History Route
+# =========================
+
+@app.get('/history/{period}')
+def get_history(period: str, db: Session = Depends(get_db)):
+    q = db.query(EmissionRecord)
+
+    if period == 'daily':
+        records = q.order_by(EmissionRecord.date.desc()).limit(1).all()
+    elif period == 'weekly':
+        records = q.order_by(EmissionRecord.date.desc()).limit(7).all()
+    elif period == 'monthly':
+        records = q.order_by(EmissionRecord.date.desc()).limit(30).all()
+    else:
+        return {"error": "Invalid period. Use daily, weekly, or monthly."}
+    
+    return [
+        {
+            'date': r.date.isoformat(),
+            'transport': r.transport_total,
+            'power': r.power_total,
+            'meal': r.meal_total,
+            'total': r.total_co2
+        }
+        for r in records
+    ]
