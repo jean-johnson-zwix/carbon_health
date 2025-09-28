@@ -35,8 +35,7 @@ except Exception as e:
 # =========================
 # Firebase Setup
 # =========================
-
-cred = credentials.Certificate("firebase_key.json")
+cred = credentials.Certificate(os.getenv("FIREBASE_KEY"))
 firebase_admin.initialize_app(cred)
 db = firestore.client()
 
