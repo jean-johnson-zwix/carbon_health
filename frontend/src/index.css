@@ -1,0 +1,165 @@
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@100..800&family=Inter:wght@100..900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Emiscope Design System - All colors MUST be HSL */
+
+@layer base {
+  :root {
+    /* Emiscope Brand Colors */
+    --background: 157 20% 97.5%; /* #F8FAF9 */
+    --foreground: 215 25% 9%; /* #0F1720 */
+    
+    /* Primary Green Palette */
+    --primary: 169 78% 27%; /* #0E7C66 */
+    --primary-foreground: 0 0% 100%;
+    --primary-accent: 172 76% 41%; /* #14B8A6 */
+    
+    /* Status Colors */
+    --success: 142 71% 45%; /* #22C55E */
+    --warning: 38 92% 50%; /* #F59E0B */
+    --error: 0 65% 51%; /* #EF4444 */
+    
+    /* Surface Colors */
+    --card: 0 0% 100%;
+    --card-foreground: 215 25% 9%;
+    --card-border: 0 0% 100% / 0.3;
+    --card-shadow: 0 0% 0% / 0.1;
+    
+    /* Glass Effect */
+    --glass-bg: 0 0% 100% / 0.95;
+    --glass-border: 0 0% 100% / 0.3;
+    --glass-backdrop: blur(12px);
+    
+    /* Semantic Tokens */
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 169 78% 27%;
+    
+    /* Transport Category */
+    --transport: 221 83% 53%; /* Blue */
+    --transport-light: 221 83% 85%;
+    
+    /* Energy Category */  
+    --energy: 38 92% 50%; /* Orange */
+    --energy-light: 38 92% 85%;
+    
+    /* Diet Category */
+    --diet: 25 95% 53%; /* Orange-red */
+    --diet-light: 25 95% 85%;
+    
+    --radius: 1rem;
+  }
+
+  .dark {
+    /* Dark Theme */
+    --background: 200 50% 4%; /* #0B0F10 */
+    --foreground: 210 40% 91%; /* #E6EDF3 */
+    
+    --card: 215 28% 10%; /* #0F1620 */
+    --card-foreground: 210 40% 91%;
+    --card-border: 0 0% 100% / 0.1;
+    
+    --glass-bg: 215 28% 10% / 0.95;
+    --glass-border: 0 0% 100% / 0.1;
+    
+    --muted: 215 28% 17%;
+    --muted-foreground: 215 20% 65%;
+    --border: 215 28% 17%;
+    --input: 215 28% 17%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background-image: 
+      radial-gradient(circle at 25% 25%, hsl(var(--primary) / 0.05) 0%, transparent 50%),
+      radial-gradient(circle at 75% 75%, hsl(var(--primary-accent) / 0.05) 0%, transparent 50%);
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Sora', system-ui, sans-serif;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-card/95 backdrop-blur-md border rounded-2xl shadow-lg;
+    border-color: hsl(var(--card-border));
+    box-shadow: 0 8px 24px -8px hsl(var(--card-shadow));
+  }
+  
+  .progress-ring {
+    transform: rotate(-90deg);
+    transform-origin: center;
+  }
+  
+  .sparkline {
+    fill: none;
+    stroke: hsl(var(--primary));
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  /* Custom slider styles */
+  input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  input[type="range"]::-webkit-slider-track {
+    @apply bg-muted rounded-lg;
+    height: 8px;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
+    @apply bg-primary border-2 border-white shadow-lg;
+    cursor: pointer;
+  }
+
+  input[type="range"]::-moz-range-track {
+    @apply bg-muted rounded-lg;
+    height: 8px;
+    border: none;
+  }
+
+  input[type="range"]::-moz-range-thumb {
+    border: none;
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
+    @apply bg-primary border-2 border-white shadow-lg;
+    cursor: pointer;
+  }
+
+  .slider-thumb-primary::-webkit-slider-thumb {
+    background-color: hsl(var(--primary));
+  }
+
+  .slider-thumb-error::-webkit-slider-thumb {
+    background-color: hsl(var(--error));
+  }
+
+  .slider-thumb-warning::-webkit-slider-thumb {
+    background-color: hsl(var(--warning));
+  }
+}
+
