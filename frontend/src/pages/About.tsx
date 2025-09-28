@@ -14,7 +14,7 @@ export default function About() {
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <div>
-            <h1 className="text-3xl font-bold font-sora">About Emiscope</h1>
+            <h1 className="text-3xl font-bold font-sora">About Carbon  Health</h1>
             <p className="text-muted-foreground">AI-assisted personal carbon footprint tracking</p>
           </div>
         </div>
@@ -26,7 +26,7 @@ export default function About() {
               Track. Understand. Reduce.
             </h2>
             <p className="text-lg text-muted-foreground mb-6">
-              Emiscope helps individuals understand and reduce their carbon footprint through 
+              Carbon Health helps individuals understand and reduce their carbon footprint through 
               intelligent tracking, personalized insights, and actionable recommendations.
             </p>
             <Button onClick={() => navigate('/calculator')} size="lg">
@@ -150,7 +150,7 @@ export default function About() {
           <h3 className="text-xl font-bold font-sora mb-4">Our Mission</h3>
           <p className="text-muted-foreground max-w-2xl mx-auto">
             We believe that individual actions, when informed and guided by data, 
-            can collectively make a significant impact on climate change. Emiscope 
+            can collectively make a significant impact on climate change. Carbon Health 
             makes carbon tracking accessible, understandable, and actionable for everyone.
           </p>
         </div>

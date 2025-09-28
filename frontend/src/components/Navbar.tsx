@@ -12,7 +12,7 @@ export default function Navbar() {
           <span className="text-xl"><span className="font-bold">E</span>miscope</span>
         </Link>
         <nav className="hidden items-center gap-6 text-sm text-muted-foreground md:flex">
-          <NavLink to="/about" className={({isActive}) => isActive ? "text-foreground" : "hover:text-foreground"}>About</NavLink>
+          <NavLink to="/login" className={({isActive}) => isActive ? "text-foreground" : "hover:text-foreground"}>Login</NavLink>
         </nav>
         <div className="flex items-center gap-3">
           <button 

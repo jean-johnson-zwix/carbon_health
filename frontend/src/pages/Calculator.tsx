@@ -10,14 +10,17 @@ import { ArrowLeft, Calculator as CalculatorIcon, Loader2, BookOpen } from 'luci
 import { DiaryInput } from '@/types';
 import { postDiary, FACTORS } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function Calculator() {
+   const { user } = useAuth(); 
   const navigate = useNavigate();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [factorsDialogOpen, setFactorsDialogOpen] = useState(false);
   const [formData, setFormData] = useState<DiaryInput>({
     date: new Date().toISOString().slice(0, 10),
+    username: user.username,
     trips: [],
     power_use: [],
     meals: []
@@ -68,6 +71,7 @@ export default function Calculator() {
     try {
       const diaryData: DiaryInput = {
         date: formData.date,
+        username: user.username,
         trips: [
           ...(inputs.carMiles > 0 ? [{ miles: inputs.carMiles, mode: 'car' as const }] : []),
           ...(inputs.busMiles > 0 ? [{ miles: inputs.busMiles, mode: 'bus' as const }] : []),
@@ -83,7 +87,9 @@ export default function Calculator() {
         ]
       };
 
-      const result = await postDiary(diaryData);
+      const token = user?.token;
+
+      const result = await postDiary(diaryData, token);
       navigate('/results', { state: { calc: result } });
     } catch (error) {
       toast({

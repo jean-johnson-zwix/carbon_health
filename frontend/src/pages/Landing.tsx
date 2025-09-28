@@ -64,35 +64,20 @@ export default function Landing() {
           <div className="lg:col-span-2 space-y-6">
             {/* Today's Carbon */}
             <TodayCarbonCard {...mockTodayData} />
-            
-            {/* Category Breakdown */}
-            <CategoryBreakdown items={mockCategoryData} />
-            
+                      
             {/* AI Tip */}
             <TipCard {...mockTipData} />
             
-            {/* Weekly Timeline */}
-            <WeeklyTimeline days={mockTimelineData} trendPct={-8} />
             
-            {/* What-If Simulator */}
-            <WhatIfSimulator 
-              {...whatIfData}
-              onChange={handleWhatIfChange}
-            />
+            
           </div>
 
           {/* Right Column - Sidebar Cards */}
           <div className="space-y-6">
             {/* Goal Ring */}
-            <GoalRing {...mockGoalData} />
             
-            {/* Streak Tracker */}
-            <StreakTracker 
-              days={mockStreakData}
-              currentStreak={5}
-              bestStreak={12}
-              successRatePct={76}
-            />
+            
+            
             
             {/* Trees Saved */}
             <TreesSavedCard {...mockTreesData} />

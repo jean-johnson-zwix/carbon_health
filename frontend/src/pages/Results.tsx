@@ -10,6 +10,7 @@ import { WhatIfSimulator } from '@/components/WhatIfSimulator';
 import { ArrowLeft, RefreshCw, Home } from 'lucide-react';
 import { CalcResponse, CategoryData, TimelineDay, LegendItem } from '@/types';
 import { useState } from 'react';
+import { getRecommendation } from '@/lib/api';
 
 export default function Results() {
   const location = useLocation();
@@ -39,7 +40,7 @@ export default function Results() {
     );
   }
 
-  const total = Number(calc.total_co2);
+  const total = Number(calc.total_emission);
   const impactLevel = total < 8 ? 'Low' : total < 16 ? 'Medium' : 'High';
   const impactColor = total < 8 ? 'success' : total < 16 ? 'warning' : 'destructive';
 
@@ -47,20 +48,20 @@ export default function Results() {
   const categoryData: CategoryData[] = [
     {
       label: 'Transport',
-      kg: calc.transport_total,
-      pct: Math.round((calc.transport_total / total) * 100),
+      kg: calc.transport_emission,
+      pct: Math.round((calc.transport_emission / total) * 100),
       color: 'hsl(var(--transport))'
     },
     {
       label: 'Energy',
-      kg: calc.power_total,
-      pct: Math.round((calc.power_total / total) * 100),
+      kg: calc.power_emission,
+      pct: Math.round((calc.power_emission / total) * 100),
       color: 'hsl(var(--energy))'
     },
     {
       label: 'Diet',
-      kg: calc.meal_total,
-      pct: Math.round((calc.meal_total / total) * 100),
+      kg: calc.meal_emission,
+      pct: Math.round((calc.meal_emission / total) * 100),
       color: 'hsl(var(--diet))'
     }
   ];
@@ -101,7 +102,9 @@ export default function Results() {
   const dominantCategory = categoryData.reduce((prev, current) => 
     current.kg > prev.kg ? current : prev
   );
-  
+
+
+  // const tips = await getRecommendation(username, token)
   const tips = {
     Transport: "Consider cycling or public transport for short trips to reduce transport emissions.",
     Energy: "Switch to LED bulbs and unplug devices when not in use to reduce energy consumption.",
@@ -161,27 +164,19 @@ export default function Results() {
                 </Badge>
               </div>
             </div>
-            
-            {/* Category Breakdown */}
-            <CategoryBreakdown items={categoryData} />
+
             
             {/* AI Tip */}
             <TipCard {...tipData} />
             
-            {/* Weekly Timeline */}
-            <WeeklyTimeline days={timelineData} />
+           
             
-            {/* What-If Simulator */}
-            <WhatIfSimulator 
-              {...whatIfData}
-              onChange={handleWhatIfChange}
-            />
+            
           </div>
 
           {/* Right Column */}
           <div className="space-y-6">
             {/* Goal Ring */}
-            <GoalRing {...goalData} />
             
             {/* Trees Saved */}
             <TreesSavedCard {...treesData} />
