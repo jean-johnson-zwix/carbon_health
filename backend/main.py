@@ -1,128 +1,177 @@
-from fastapi import FastAPI, HTTPException, Depends
-from pydantic import BaseModel
-from typing import List
-import json
-import os
-from models import User, LoginRequest
-from datetime import date
-from passlib.context import CryptContext
-from jose import JWTError, jwt
-from datetime import datetime, timezone, timedelta
-import firebase_admin
-from firebase_admin import credentials, firestore
-from passlib.hash import argon2
+# Carbon Health
+A web application designed to track your personal carbon footprint.
 
 
-# =========================
-# Firebase Setup
-# =========================
+## Set up
 
-cred = credentials.Certificate("firebase_key.json")
-firebase_admin.initialize_app(cred)
-db = firestore.client()
+Step 1: Clone the repository
 
-# =========================
-# Authentication
-# =========================
+```
+git clone https://github.com/jean-johnson-zwix/carbon_health
+cd carbon_health
+cd backend
+```
 
-pwd_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
+Step 2: Setup the python environmnet
 
-def hash_password(password: str) -> str:
-    return argon2.hash(password)
+```
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
 
-def verify_password(plain_password: str, hashed_password: str) ->str:
-    return argon2.verify(plain_password, hashed_password)
+Step 3: Run the application
 
-app = FastAPI(
-    title="Carbon Health API",
-    description="API for tracking personal carbon emissions."
-)
+```
+uvicorn main:app --port 5000
+```
 
-# =========================
-# JWT Authentication
-# =========================
-SECRET_KEY = 'supersecret' #⚠️ replace with env variable in production
-ALGORITHM = 'HS256'
-ACCESS_TOKEN_EXPIRE_MINUTES = 60
+## Features
 
-def create_access_token(data: dict, expires_delta: timedelta | None = None):
-    to_encode = data.copy()
-    expire = datetime.now(timezone.utc) + (expires_delta or timedelta(minutes=15))
-    to_encode.update({'exp': expire})
-    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-    return encoded_jwt
+- Calculate daily carbon emissions based on transportation, power consumed and food consumed
+- Display carbon emissions for the day, week, month
+- Use Gemini AI agent to give recommendations to reduce the carbon footprint based on historical data
+- (Phase 2) Forecast future carbon emission trends for the user.
 
-# =========================
-# Protect Routes With JWT
-# =========================
-from fastapi import Depends, status
-from fastapi.security import OAuth2PasswordBearer
+### Carbon Emission Calculation
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
+### Transportation
+Input
+- Miles travelled (mi): float
+- Mode of transport (bus/car/rail/walk)
 
-def get_current_user(token: str = Depends(oauth2_scheme)):
-    try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        email: str = payload.get("sub")
-        if email is None:
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
-        return email
-    except JWTError:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
+### Power consumption
+Input:
+- Usage Hours (hours) : float
+- Device Type: (phone/tv/computer)
+
+### Food Data
+Input: 
+- No. of Meat Serving (100g): integer
+- Type of Meat (beef/pork/chicken)
 
 
-# =========================
-# CO2 emission rates
-# =========================
-TRANSPORT_CO2 = {"bus": 0.4, "car": 0.09, "rail": 0.08, "walk": 0.0, "bike": 0.0}
-DEVICE_CO2 = {"phone": 0.003, "tv": 0.03, "computer": 0.04}
-MEAT_CO2 = {"beef": 2.5, "pork": 0.7, "chicken": 0.6}
+# API REFERENCE
 
-# =========================
-# User Routes
-# =========================
-@app.get("/test")
-def handle_request():
-    return {"message": "Test GET API"}
+## Login API
 
-@app.post("/register")
-def register(user: User):
-    
-    # check if user exist
-    user_ref = db.collection('users').document(user.username)
-    if user_ref.get().exists:
-        raise HTTPException(status_code=409, detail="Username is taken")
-    
-    # add the user
-    user_data = {
-        "name": user.name,
-        "email": user.email,
-        "password": hash_password(user.password),
-        "heat_source": user.heat_source,
-	    "housing": user.housing,
-	    "income": user.income
-    }
-    user_ref.set(user_data)
-    return {'response': f'{user.name} saved successfully!'}
+Endpoint: /login
 
-@app.post("/login")
-def login(login_request: LoginRequest):
+cURL Command:
 
-    # check if user exist
-    user_ref = db.collection('users').document(login_request.username)
-    user = user_ref.get()
-    if not user.exists:
-        raise HTTPException(status_code=404, detail="User not found")
-    user = user.to_dict()
-    print(user)
-    # match password
-    if not verify_password(login_request.password, user['password']):
-        raise HTTPException(status_code=401, detail='Incorrect credentials')
-   
-    # generate access token
-    access_token = create_access_token(
-        data={"sub": user['email']},
-        expires_delta=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    )
-    
-    return {'token': access_token, 'username': login_request.username}
+```
+curl --location 'http://localhost:5000/login' \
+--header 'Content-Type: application/json' \
+--data '{
+	"username":"john",
+	"password":"secretpassword"
+}'
+```
+
+Sample Request:
+
+```
+{
+	"username":"john",
+	"password":"secretpassword"
+}
+```
+
+Sample Response:
+
+```
+{
+    "access_token": "",
+    "token_type": "bearer"
+}
+```
+
+## Register API
+
+Endpoint: /register
+
+cURL Command:
+
+```
+curl --location 'http://localhost:5000/register' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+	"username":"john",
+	"name":"John Smith",
+	"email":"john_smith@gmail.com",
+	"password":"secretpassword",
+	"heat_source": "electric",
+	"housing":"3b2b",
+	"income":3500.00
+}'
+```
+
+Sample Request:
+
+```
+{
+	"username":"john",
+	"name":"John Smith",
+	"email":"john_smith@gmail.com",
+	"password":"secretpassword",
+	"heat_source": "electric",
+	"housing":"3b2b",
+	"income":3500.00
+}
+```
+
+Sample Response:
+
+```
+{
+    "response": "Registration successful for john!"
+}
+```
+
+## Calculate API
+
+Endpoint: /calculate
+
+cURL Command:
+
+```
+curl --location 'http://localhost:3000/calculate' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Bearer *token*' \
+--data '{
+	"username" : "john",
+	"date":"2025-09-27",
+	"meals":[
+		{
+			"servings":1,
+			"meat":"chicken"
+		}
+    ]
+}'
+```
+
+Sample Request:
+
+```
+{
+	"username" : "john",
+	"date":"2025-09-27",
+	"meals":[
+		{
+			"servings":1,
+			"meat":"chicken"
+		}
+    ]
+}
+```
+
+Sample Response:
+
+```
+{
+    "transport_emission": 2.49,
+    "power_emission": 0.172,
+    "meal_emission": 2.5,
+    "total_emission": 5.16
+}
+```

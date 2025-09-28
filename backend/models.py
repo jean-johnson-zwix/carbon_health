@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from typing import List
+import datetime
 
 # =========================
 # User Data Models
@@ -32,14 +33,10 @@ class Meal(BaseModel):
     servings: float
     meat: str  # e.g., "beef", "pork", "chicken"
 
-class CO2Data(BaseModel):
-    day: int
-    month: int
-    year: int
+class CalculateRequest(BaseModel):
+    username: str
+    date: datetime.date
     trips: List[Trip] = []
     power_use: List[PowerUse] = []
     meals: List[Meal] = []
-    heat_source: str = None   # e.g., "gas", "electric", "oil"
-    housing: str = None       # e.g., "apartment", "house"
-    income: float = None      # user's income (for analytics, optional)
 
