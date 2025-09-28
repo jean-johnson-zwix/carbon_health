@@ -43,6 +43,9 @@ class CO2Data(BaseModel):
     trips: List[Trip] = []
     power_use: List[PowerUse] = []
     meals: List[Meal] = []
+    heat_source: str = None   # e.g., "gas", "electric", "oil"
+    housing: str = None       # e.g., "apartment", "house"
+    income: float = None      # user's income (for analytics, optional)
 
 # =========================
 # File to store users
@@ -129,5 +132,8 @@ def calculate_co2(data: CO2Data):
         "power_total": round(power_total, 3),
         "meal_total": round(meal_total, 3),
         "total_co2": round(total_co2, 3),
-        "date": date_str
+        "date": date_str,
+        "heat_source": data.heat_source,
+        "housing": data.housing,
+        "income": data.income
     }
